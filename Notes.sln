@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes.Shared", "Notes.Share
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notes.Infra", "Notes.Infra\Notes.Infra.csproj", "{88C1C883-938C-423B-9E74-6D51B097F600}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notes.Api", "Notes.Api\Notes.Api.csproj", "{8CE025E4-C690-44B6-A03A-B2979F6476E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{88C1C883-938C-423B-9E74-6D51B097F600}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88C1C883-938C-423B-9E74-6D51B097F600}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88C1C883-938C-423B-9E74-6D51B097F600}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CE025E4-C690-44B6-A03A-B2979F6476E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CE025E4-C690-44B6-A03A-B2979F6476E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CE025E4-C690-44B6-A03A-B2979F6476E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CE025E4-C690-44B6-A03A-B2979F6476E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
