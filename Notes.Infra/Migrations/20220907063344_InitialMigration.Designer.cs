@@ -12,7 +12,7 @@ using Notes.Infra.Data;
 namespace Notes.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220907012035_InitialMigration")]
+    [Migration("20220907063344_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
