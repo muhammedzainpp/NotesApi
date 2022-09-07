@@ -1,8 +1,7 @@
-﻿using Domain.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Notes.Application.Interfaces;
-using Notes.Shared.Dtos.Notes;
+using Notes.Application.Notes.Commands;
+using Notes.Application.Notes.Queries;
 
 namespace Notes.Api.Controllers
 {
@@ -10,45 +9,25 @@ namespace Notes.Api.Controllers
     [ApiController]
     public class NotesController : ControllerBase
     {
-        private readonly INotesRepository _notesRepository;
-        public NotesController(INotesRepository notesrepository)
-        {
-            _notesRepository= notesrepository;
-        }
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetNoteDto>>> GetNotes()
-        {
-            try
-            {
-                var notes = await this._notesRepository.GetNotes();
-                if(notes == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    return Ok(notes);
-                }
-                
-            }
-            catch (Exception)
-            {
+        private readonly IMediator _mediator;
+        public NotesController(IMediator mediator) => _mediator = mediator;
 
-                throw;
-            }
-            
+        [HttpGet]
+        public async Task<IActionResult> GetNotes()
+        {
+            return Ok(await _mediator.Send(new GetNotesQuery()));
         }
 
         [HttpPost]
-        public async Task<int>CreateNote(SaveNoteCommand note)
+        public async Task<IActionResult> CreateNote(SaveNoteCommand request)
         {
-            var id= await this._notesRepository.CreateNote(note);
-            return id;
-
+            return Ok(await _mediator.Send(request));
         }
 
-
-
-
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteNote(int id)
+        {
+            return Ok(await _mediator.Send(new DeleteNoteCommand() { Id = id }));
+        }
     }
 }

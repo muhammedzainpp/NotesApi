@@ -17,7 +17,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Notes.Application\Notes.Application.csproj" />
-    <ProjectReference Include="..\Notes.Shared\Notes.Shared.csproj" />
   </ItemGroup>
 
 </Project>

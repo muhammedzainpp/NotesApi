@@ -39,7 +39,7 @@ public class AppDbContext : DbContext, IAppDbContext
                         break;
                     case EntityState.Deleted:
                         changedEntity.State = EntityState.Modified;
-                        changedEntity.CurrentValues["isDeleted"] = true;
+                        changedEntity.CurrentValues["IsDeleted"] = true;
                         break;
 
                 }

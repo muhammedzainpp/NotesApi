@@ -7,5 +7,5 @@ namespace Notes.Infra.Data;
 public class NoteConfiguration : IEntityTypeConfiguration<Note>
 {
     public void Configure(EntityTypeBuilder<Note> builder) => 
-        builder.HasQueryFilter(n => n.IsDeleted);
+        builder.HasQueryFilter(n => n.IsDeleted == false);
 }

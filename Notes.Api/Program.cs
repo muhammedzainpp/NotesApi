@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Notes.Application;
 using Notes.Application.Interfaces;
@@ -12,10 +13,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<IAppDbContext,AppDbContext>(
+builder.Services.AddDbContext<IAppDbContext, AppDbContext>(
         options => options.UseSqlServer("name=ConnectionStrings:NotesDB"));
-builder.Services.AddScoped<INotesRepository,NotesRepository>();
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+var assembly = AppDomain.CurrentDomain.GetAssemblies().
+    Where(a => a.GetName()?.Name?.Equals("Notes.Application") ?? false).First();
+builder.Services.AddMediatR(assembly);
 
 
 var app = builder.Build();
