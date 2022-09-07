@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.Entities;
+using Domain.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using Notes.Application.Interfaces;
 
@@ -36,6 +37,11 @@ public class AppDbContext : DbContext, IAppDbContext
                         entity.ModifiedAt = now;
                         entity.ModifiedBy = "shaheem";
                         break;
+                    case EntityState.Deleted:
+                        changedEntity.State = EntityState.Modified;
+                        changedEntity.CurrentValues["isDeleted"] = true;
+                        break;
+
                 }
             }
         }
