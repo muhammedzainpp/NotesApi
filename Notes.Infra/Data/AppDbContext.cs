@@ -14,6 +14,7 @@ public class AppDbContext : DbContext, IAppDbContext
 
     }
     public DbSet<Note> Notes { get; set; } = default!;
+    public DbSet<Label> Labels { get ; set ; } = default!;
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
@@ -48,4 +49,5 @@ public class AppDbContext : DbContext, IAppDbContext
 
         return base.SaveChangesAsync(cancellationToken);
     }
+
 }

@@ -22,8 +22,8 @@ public class GetNotesQueryHandler : IRequestHandler<GetNotesQuery, IEnumerable<N
 
     public async Task<IEnumerable<NotesDto>> Handle(GetNotesQuery request, CancellationToken cancellationToken)
     {
-        return _context.Notes
-             .ProjectTo<NotesDto>(_mapper.ConfigurationProvider).ToList();
+        return await _context.Notes
+             .ProjectTo<NotesDto>(_mapper.ConfigurationProvider).ToListAsync();
 
 
         //var noteDto = notes.Select(n => new NotesDto
