@@ -17,8 +17,20 @@ public class AppDbContext : IdentityDbContext, IAppDbContext
     public DbSet<Note> Notes { get; set; } = default!;
     public DbSet<Label> Labels { get ; set ; } = default!;
 
-    
+    public override int SaveChanges()
+    {
+        OnSave();
+        return base.SaveChanges();
+    }
+
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        OnSave();
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void OnSave()
     {
         var now = DateTime.UtcNow;
 
@@ -48,8 +60,5 @@ public class AppDbContext : IdentityDbContext, IAppDbContext
                 }
             }
         }
-
-        return base.SaveChangesAsync(cancellationToken);
     }
-
 }
