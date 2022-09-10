@@ -12,10 +12,8 @@ public class NotesController : ApiControllerBase
     {}
 
     [HttpGet]
-    public async Task<IActionResult> GetNotes()
-    {
-        return Ok(await _mediator.Send(new GetNotesQuery()));
-    }
+    public async Task<IActionResult> GetNotes() =>
+        Ok(await _mediator.Send(new GetNotesQuery()));
 
     [HttpPost]
     public async Task<IActionResult> CreateNote(SaveNoteCommand request)
