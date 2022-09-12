@@ -3,33 +3,36 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Notes.Application;
 using Notes.Application.Interfaces;
 using Notes.Infra.Data;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var services = builder.Services;
 // Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddControllers();
 
-builder.Services.AddDbContext<IAppDbContext, AppDbContext>(
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
+
+services.AddDbContext<IAppDbContext, AppDbContext>(
         options => options.UseSqlServer("name=ConnectionStrings:NotesDB"));
-builder.Services.AddIdentity<IdentityUser,IdentityRole>()
+
+services.AddIdentity<AppUser,IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+services.AddAutoMapper(typeof(Program).Assembly);
+
 builder.Services.AddScoped<DbInitializer>();
 
 var assembly = AppDomain.CurrentDomain.GetAssemblies().
     Where(a => a.GetName()?.Name?.Equals("Notes.Application") ?? false).First();
 builder.Services.AddMediatR(assembly);
 
-
 var jwtSettings = builder.Configuration.GetSection("JWTSettings");
-builder.Services.AddAuthentication(opt =>
+services.AddAuthentication(opt =>
 {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -49,7 +52,7 @@ builder.Services.AddAuthentication(opt =>
 });
 
 
-builder.Services.AddCors(options =>
+services.AddCors(options =>
 {
     options.AddPolicy(name: "AllowOrigin",
         builder =>

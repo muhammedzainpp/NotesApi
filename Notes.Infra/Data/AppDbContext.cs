@@ -1,14 +1,14 @@
-﻿using Domain;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Entities.Base;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Notes.Application;
 using Notes.Application.Interfaces;
 
 
 namespace Notes.Infra.Data;
 
-public class AppDbContext : IdentityDbContext, IAppDbContext
+public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {

@@ -1,37 +1,41 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Notes.Application.Notes.Commands;
-using System.ComponentModel.DataAnnotations;
+using Notes.Application.Account.Commands.Login;
 
 namespace Notes.Application.Account.Commands.Register;
 
-public class RegisterCommand : IRequest<RegistrationResponseDto>
+public class RegisterCommand : IRequest<AuthResponseDto>
 {
     public string Email { get; set; } = default!;
 
     public string Password { get; set; } = default!;
     public string ConfirmPassword { get; set; } = default!;
 }
-public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegistrationResponseDto>
+public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthResponseDto>
 {
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<AppUser> _userManager;
+    private readonly IMediator _mediator;
 
-    public RegisterCommandHandler(UserManager<IdentityUser> userManager) => 
-        _userManager = userManager;
-
-    public async Task<RegistrationResponseDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public RegisterCommandHandler(UserManager<AppUser> userManager, IMediator mediator)
     {
-        var user = new IdentityUser { UserName = request.Email, Email = request.Email };
+        _userManager = userManager;
+        _mediator = mediator;
+    }
+
+    public async Task<AuthResponseDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    {
+        var user = new AppUser { UserName = request.Email, Email = request.Email };
 
         var result = await _userManager.CreateAsync(user, request.Password);
+        if (!result.Succeeded) return new AuthResponseDto { IsSuccessful =  result.Succeeded };
 
-
-        var response = new RegistrationResponseDto
+        var loginCommand = new LoginCommand
         {
-            Errors = result.Errors.Select(e => e.Description), 
-            IsSuccessfulRegistration = result.Succeeded
+            Email = request.Email,
+            Password = request.Password,
+            RememberMe  = false
         };
 
-        return response;
+        return await _mediator.Send(loginCommand);
     }
 }

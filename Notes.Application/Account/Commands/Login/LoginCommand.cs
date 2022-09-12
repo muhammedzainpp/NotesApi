@@ -12,15 +12,16 @@ public class LoginCommand : IRequest<AuthResponseDto>
 {
     public string Email { get; set; } = default!;
     public string Password { get; set; } = default!;
+    public bool RememberMe { get; set; }
 }
 
 public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto>
 {
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<AppUser> _userManager;
     private readonly IConfigurationSection _jwtSettings;
     private readonly IConfiguration _configuration;
 
-    public LoginCommandHandler(UserManager<IdentityUser> userManager, IConfiguration configuration)
+    public LoginCommandHandler(UserManager<AppUser> userManager, IConfiguration configuration)
     {
         _configuration = configuration;
         _userManager = userManager;
@@ -31,15 +32,20 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto
         var user = await _userManager.FindByNameAsync(request.Email);
 
         if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
-            return new AuthResponseDto { IsAuthSuccessful = false, Token = string.Empty };
+            return GetResponseIfNotSuccessful();
 
         var signingCredentials = GetSigningCredentials();
         var claims = GetClaims(user);
         var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
         var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
-        return new AuthResponseDto { IsAuthSuccessful = true, Token = token };
+        return new AuthResponseDto { IsSuccessful = true, Token = token };
+
     }
+
+    private static AuthResponseDto GetResponseIfNotSuccessful() =>
+        new AuthResponseDto { IsSuccessful = false };
+
     private SigningCredentials GetSigningCredentials()
     {
         var key = Encoding.UTF8.GetBytes(_jwtSettings["securityKey"]);
@@ -47,7 +53,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto
 
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
     }
-    private List<Claim> GetClaims(IdentityUser user)
+    private List<Claim> GetClaims(AppUser user)
     {
         var claims = new List<Claim>
     {
