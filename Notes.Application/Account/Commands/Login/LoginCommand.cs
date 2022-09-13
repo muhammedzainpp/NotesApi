@@ -57,7 +57,8 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto
     {
         var claims = new List<Claim>
     {
-        new Claim(ClaimTypes.Name, user.Email)
+        new (ClaimTypes.Name, user.UserName),
+        new (ClaimTypes.Email, user.Email),
     };
 
         return claims;

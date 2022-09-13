@@ -1,9 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Notes.Api.Controllers.Base;
-using Notes.Application;
 using Notes.Application.Account.Commands.Login;
 using Notes.Application.Account.Commands.Logout;
 using Notes.Application.Account.Commands.Register;

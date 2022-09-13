@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Notes.Api.Controllers.Base;
 using Notes.Application.Notes.Commands;
@@ -6,6 +7,7 @@ using Notes.Application.Notes.Queries;
 
 namespace Notes.Api.Controllers;
 
+[Authorize]
 public class NotesController : ApiControllerBase
 {
     public NotesController(IMediator mediator) : base(mediator)

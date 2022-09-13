@@ -7,6 +7,7 @@ namespace Notes.Application.Interfaces
     {
         DbSet<Note> Notes { get; set; }
         DbSet<Label> Labels { get; set; }
+        DbSet<User> Users { get; set; }
 
         int SaveChanges();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

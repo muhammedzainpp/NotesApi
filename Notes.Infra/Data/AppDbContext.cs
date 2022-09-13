@@ -16,6 +16,7 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
     }
     public DbSet<Note> Notes { get; set; } = default!;
     public DbSet<Label> Labels { get ; set ; } = default!;
+    public DbSet<User> Users { get; set; } = default!;
 
     public override int SaveChanges()
     {
