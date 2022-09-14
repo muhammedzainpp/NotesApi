@@ -11,6 +11,7 @@ public class SaveNoteCommand : IRequest<int>, IMapTo<Note>
     public int Id { get; set; }
     public string Title { get; set; } = default!;
     public string? Description { get; set; }
+    public int UserId { get; set; }
 }
 
 public class SaveNoteCommandHandler : IRequestHandler<SaveNoteCommand, int>

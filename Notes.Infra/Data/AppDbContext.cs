@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Entities.Base;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Notes.Application;
@@ -10,13 +11,15 @@ namespace Notes.Infra.Data;
 
 public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
+    public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
+    {
+        _httpContextAccessor = httpContextAccessor;
     }
     public DbSet<Note> Notes { get; set; } = default!;
     public DbSet<Label> Labels { get ; set ; } = default!;
-    public DbSet<User> Users { get; set; } = default!;
+    public new DbSet<User> Users { get; set; } = default!;
 
     public override int SaveChanges()
     {
@@ -34,6 +37,7 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
     private void OnSave()
     {
         var now = DateTime.UtcNow;
+        var currentUser = GetCurrentUser();
 
         foreach (var changedEntity in ChangeTracker.Entries())
         {
@@ -42,16 +46,16 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
                 switch (changedEntity.State)
                 {
                     case EntityState.Added:
-                        entity.CreatedDate = now;
+                        entity.CreatedAt = now;
                         entity.ModifiedAt = now;
-                        entity.CreatedBy = "zain";
-                        entity.ModifiedBy = "zain";
+                        entity.CreatedBy = currentUser;
+                        entity.ModifiedBy = currentUser;
                         break;
                     case EntityState.Modified:
                         Entry(entity).Property(x => x.CreatedBy).IsModified = false;
-                        Entry(entity).Property(x => x.CreatedDate).IsModified = false;
+                        Entry(entity).Property(x => x.CreatedAt).IsModified = false;
                         entity.ModifiedAt = now;
-                        entity.ModifiedBy = "shaheem";
+                        entity.ModifiedBy = currentUser;
                         break;
                     case EntityState.Deleted:
                         changedEntity.State = EntityState.Modified;
@@ -61,5 +65,14 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
                 }
             }
         }
+    }
+
+    private string GetCurrentUser()
+    {
+        var currentSessionUserEmail = _httpContextAccessor.HttpContext?.User?.Identity?.Name;
+
+        var user = Users.SingleOrDefault(u => u.Email.Equals(currentSessionUserEmail));
+
+        return user is not null ? user.FirstName : "Anonymous";
     }
 }

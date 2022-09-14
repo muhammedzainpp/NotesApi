@@ -13,7 +13,7 @@ public class RegisterCommand : IRequest<AuthResponseDto>
     public string Email { get; set; } = default!;
 
     public string Password { get; set; } = default!;
-    public string ConfirmPassword { get; set; } = default!;
+    //public string ConfirmPassword { get; set; } = default!;
 }
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthResponseDto>
 {
@@ -38,7 +38,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthRespo
 
         appUser = await _userManager.FindByEmailAsync(request.Email);
 
-        var user = MapToUser(appUser);
+        var user = MapToUser(appUser , request);
 
         _context.Users.Add(user);
 
@@ -49,11 +49,12 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthRespo
         return await _mediator.Send(loginCommand);
     }
 
-    private static User MapToUser(AppUser appUser) => new()
+    private static User MapToUser(AppUser appUser, RegisterCommand request) => new()
     {
         AppUserId = appUser.Id,
-        FirstName = appUser.UserName,
-        LastName = appUser.UserName
+        Email = request.Email,
+        FirstName = request.FirstName,
+        LastName = request.LastName
     };
 
     private static LoginCommand MapToLoginCommand(RegisterCommand request) => new()

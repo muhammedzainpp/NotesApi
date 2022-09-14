@@ -12,7 +12,23 @@ namespace Notes.Infra.Data
 
         public void Seed()
         {
+            SeedUser();
             SeedNotes();
+        }
+
+        private void SeedUser()
+        {
+            if (_context.Users.Any()) return;
+
+            var appUserId = "test";
+            _context.Users.Add(new User 
+            { 
+                AppUserId = appUserId,
+                Email = "test@test.com",
+                FirstName = "Tester"
+            });
+
+            _context.SaveChanges();
         }
 
         private void SeedNotes()
