@@ -36,8 +36,10 @@ public class AccountController : ApiControllerBase
 
     [Authorize]
     [HttpPost("Logout")]
-    public IActionResult LogoutAsync(LogoutDto command) =>
-        Ok(_mediator.Send(command));
+    public async Task LogoutAsync(LogoutDto request)
+    {
+        await _identityService.LogoutAsync(request);
+    }
 
     [HttpPost("refreshToken")]
     public async Task<IActionResult> RefreshTokenAsync(RefreshTokenDto request)

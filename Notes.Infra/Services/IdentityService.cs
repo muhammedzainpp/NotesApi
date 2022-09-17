@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Notes.Application;
 using Notes.Application.Common.Dtos.IdentityDtos;
+using Notes.Application.Common.Exceptions;
 using Notes.Application.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -51,11 +52,13 @@ public class IdentityService : IIdentityService
 
         var result = await _userManager.CreateAsync(appUser, request.Password);
 
-        if (!result.Succeeded) GetResponseIfNotSuccessful();
+        if (result.Succeeded) GetResponseIfNotSuccessful();
 
         appUser = await _userManager.FindByEmailAsync(request.Email);
 
         var user = MapToUser(appUser, request);
+
+
 
         _context.Users.Add(user);
 
@@ -65,6 +68,25 @@ public class IdentityService : IIdentityService
 
         return await LoginAsync(loginRequest);
     }
+
+
+    public async Task LogoutAsync(LogoutDto request)
+    {
+        var user = await _context.Users.FindAsync(request.UserId);
+
+        if (user is null)
+            throw new NotFoundException("User Not Found in this Id");
+
+        var appUser =await _userManager.FindByIdAsync(user.AppUserId);
+        appUser.RefreshToken = null;
+        appUser.RefreshTokenExpiryTime = null;
+
+       await _userManager.UpdateAsync(appUser);
+    }
+
+
+
+
 
     public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenDto request)
     {
