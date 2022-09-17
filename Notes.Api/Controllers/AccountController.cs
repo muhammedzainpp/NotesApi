@@ -2,22 +2,22 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Notes.Api.Controllers.Base;
-using Notes.Application.Account.Commands.Login;
-using Notes.Application.Account.Commands.Logout;
-using Notes.Application.Account.Commands.Register;
-
+using Notes.Application.Common.Dtos.IdentityDtos;
+using Notes.Application.Interfaces;
 
 namespace Notes.Api.Controllers;
 
 public class AccountController : ApiControllerBase
 {
-    public AccountController(IMediator mediator) : base(mediator)
-    { }
+    private readonly IIdentityService _identityService;
+
+    public AccountController(IMediator mediator, IIdentityService identityService) : base(mediator) => 
+        _identityService = identityService;
 
     [HttpPost("Registration")]
-    public async Task<IActionResult> RegisterUser([FromBody] RegisterCommand command)
+    public async Task<IActionResult> RegisterUser(RegisterDto request)
     {
-        var response = await _mediator.Send(command);
+        var response = await _identityService.RegisterAsync(request);
         if (response.IsSuccessful)
             return Ok(response);
 
@@ -25,9 +25,9 @@ public class AccountController : ApiControllerBase
     }
 
     [HttpPost("Login")]
-    public async Task<IActionResult> Login([FromBody] LoginCommand command)
+    public async Task<IActionResult> LoginAsync(LoginDto request)
     {
-        var response = await _mediator.Send(command);
+        var response = await _identityService.LoginAsync(request);
         if (response.IsSuccessful)
             return Ok(response);
 
@@ -36,24 +36,16 @@ public class AccountController : ApiControllerBase
 
     [Authorize]
     [HttpPost("Logout")]
-    public IActionResult LogoutAsync(LogoutCommand command) =>
+    public IActionResult LogoutAsync(LogoutDto command) =>
         Ok(_mediator.Send(command));
 
-    [HttpGet("currentuserinfo")]
-    public CurrentUserDto CurrentUserInfo()
+    [HttpPost("refreshToken")]
+    public async Task<IActionResult> RefreshTokenAsync(RefreshTokenDto request)
     {
-        return new CurrentUserDto
-        {
-            IsAuthenticated = User?.Identity?.IsAuthenticated ?? false,
-            UserName = User?.Identity?.Name,
-            Claims = User?.Claims
-            .ToDictionary(c => c.Type, c => c.Value)
-        };
+        var response = await _identityService.RefreshTokenAsync(request);
+        if (response.IsSuccessful)
+            return Ok(response);
+
+        return BadRequest(response);
     }
-}
-public class CurrentUserDto
-{
-    public bool IsAuthenticated { get; set; }
-    public string? UserName { get; set; }
-    public Dictionary<string, string>? Claims { get; set; }
 }

@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Notes.Application;
 using Notes.Application.Interfaces;
 using Notes.Infra.Data;
+using Notes.Infra.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,6 +52,7 @@ services.AddAuthentication(opt =>
     };
 });
 
+services.AddScoped<IIdentityService, IdentityService>();
 
 services.AddCors(options =>
 {
