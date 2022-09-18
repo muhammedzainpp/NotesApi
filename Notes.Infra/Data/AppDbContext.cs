@@ -20,7 +20,11 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
     public DbSet<Note> Notes { get; set; } = default!;
     public DbSet<Label> Labels { get ; set ; } = default!;
     public new DbSet<User> Users { get; set; } = default!;
-
+    public DbSet<Address> Addresses { get; set; } = default!;
+    public DbSet<Country> Countries { get; set; } = default!;
+    public DbSet<State> States { get; set; } = default!;
+    public DbSet<City> Cities { get; set; } = default!;
+    
     public override int SaveChanges()
     {
         OnSave();

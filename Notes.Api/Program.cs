@@ -69,23 +69,24 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-
-
-void SeedData(IHost? app)
+static void InitializeDb(IHost? app)
 {
     var scopeFactory = app?.Services.GetService<IServiceScopeFactory>();
     using (var scope = scopeFactory?.CreateScope())
     {
-        var service = scope?.ServiceProvider.GetService<DbInitializer>();
+        var dbInitializer = scope?.ServiceProvider.GetService<DbInitializer>();
 
-        service?.Seed();
+        dbInitializer?.Seed();
+
+        var context = scope?.ServiceProvider.GetService<IAppDbContext>() as AppDbContext;
+
+        context?.Database.Migrate();
     }
 }
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    SeedData(app);
+    InitializeDb(app);
     app.UseSwagger();
     app.UseSwaggerUI();
 }

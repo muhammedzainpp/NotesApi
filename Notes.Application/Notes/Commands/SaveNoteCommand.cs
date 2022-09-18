@@ -35,7 +35,7 @@ public class SaveNoteCommandHandler : IRequestHandler<SaveNoteCommand, int>
 
             if (entity == null) throw new NotFoundException($"Note not found with id {request.Id}");
 
-            _mapper.Map(request, entity);
+               _mapper.Map(request, entity);
         }
         //var entity = new Note()
         //{
