@@ -48,6 +48,6 @@ public class AccountController : ApiControllerBase
         if (response.IsSuccessful)
             return Ok(response);
 
-        return BadRequest(response);
+        return Unauthorized(response);
     }
 }
