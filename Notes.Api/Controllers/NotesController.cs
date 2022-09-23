@@ -14,17 +14,17 @@ public class NotesController : ApiControllerBase
     {}
 
     [HttpGet]
-    public async Task<IActionResult> GetNotes() =>
+    public async Task<IActionResult> GetNotesAsync() =>
         Ok(await _mediator.Send(new GetNotesQuery()));
 
     [HttpPost]
-    public async Task<IActionResult> CreateNote(SaveNoteCommand request)
+    public async Task<IActionResult> SaveNoteAsync(SaveNoteCommand request)
     {
         return Ok(await _mediator.Send(request));
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteNote(int id)
+    public async Task<IActionResult> DeleteNoteAsync(int id)
     {
         return Ok(await _mediator.Send(new DeleteNoteCommand() { Id = id }));
     }
