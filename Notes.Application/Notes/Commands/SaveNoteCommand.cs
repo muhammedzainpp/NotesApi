@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using Domain.Entities;
-using MediatR;
+using Domain.Exceptions;
+using Notes.Application.Common.Abstractions;
 using Notes.Application.Common.Exceptions;
 using Notes.Application.Interfaces;
 
 namespace Notes.Application.Notes.Commands;
 
-public class SaveNoteCommand : IRequest<int>, IMapTo<Note>
+public class SaveNoteCommand : ICommand<int>, IMapTo<Note>
 {
     public int Id { get; set; }
     public string Title { get; set; } = default!;
@@ -14,7 +15,7 @@ public class SaveNoteCommand : IRequest<int>, IMapTo<Note>
     public int UserId { get; set; }
 }
 
-public class SaveNoteCommandHandler : IRequestHandler<SaveNoteCommand, int>
+public class SaveNoteCommandHandler : ICommandHandler<SaveNoteCommand, int>
 {
     private readonly IAppDbContext _context;
     private readonly IMapper _mapper;
@@ -33,7 +34,7 @@ public class SaveNoteCommandHandler : IRequestHandler<SaveNoteCommand, int>
         {
             entity = await _context.Notes.FindAsync(request.Id);
 
-            if (entity == null) throw new NotFoundException($"Note not found with id {request.Id}");
+            if (entity == null) throw new NoteNotFoundException(request.Id);
 
                _mapper.Map(request, entity);
         }

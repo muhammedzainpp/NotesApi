@@ -1,18 +1,17 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Notes.Application.Common.Abstractions;
 using Notes.Application.Interfaces;
 using Notes.Application.Notes.Queries.Dtos;
 
 namespace Notes.Application.Notes.Queries;
 
-public class GetNotesQuery : IRequest<IEnumerable<NotesDto>>
+public class GetNotesQuery : IQuery<IEnumerable<NotesDto>>
 {
 }
 
-public class GetNotesQueryHandler : IRequestHandler<GetNotesQuery, IEnumerable<NotesDto>>
+public class GetNotesQueryHandler : IQueryHandler<GetNotesQuery, IEnumerable<NotesDto>>
 {
 
     private readonly IAppDbContext _context;

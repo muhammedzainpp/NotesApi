@@ -1,14 +1,15 @@
-﻿using MediatR;
+﻿using Domain.Exceptions;
+using Notes.Application.Common.Abstractions;
 using Notes.Application.Common.Exceptions;
 using Notes.Application.Interfaces;
 
 namespace Notes.Application.Notes.Commands;
 
-public class DeleteNoteCommand : IRequest<int>
+public class DeleteNoteCommand : ICommand<int>
 {
     public int Id { get; set; }
 }
-public class DeleteCommandHandler : IRequestHandler<DeleteNoteCommand, int>
+public class DeleteCommandHandler : ICommandHandler<DeleteNoteCommand, int>
 {
     private readonly IAppDbContext _context;
     public DeleteCommandHandler(IAppDbContext context) => _context = context;
@@ -19,7 +20,7 @@ public class DeleteCommandHandler : IRequestHandler<DeleteNoteCommand, int>
 
 
         if (result == null)
-            throw new NotFoundException($"Note not found with id {request.Id}");
+            throw new NoteNotFoundException(request.Id);
 
         _context.Notes.Remove(result);
         await _context.SaveChangesAsync();
