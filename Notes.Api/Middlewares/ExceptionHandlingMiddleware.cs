@@ -2,6 +2,7 @@
 using Notes.Application.Common.Exceptions;
 using System.Text.Json;
 using ApplicationException = Domain.Exceptions.ApplicationException;
+using NotFoundException = Domain.Exceptions.NotFoundException;
 
 namespace Notes.Api.Middlewares;
 
