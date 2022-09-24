@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using Domain.Entities;
-using MediatR;
+using Domain.Exceptions;
+using Notes.Application.Common.Abstractions;
 using Notes.Application.Common.Exceptions;
 using Notes.Application.Interfaces;
 
 namespace Notes.Application.UserProfiles.Commands;
 
-public class SaveUserProfileCommand : IRequest<int>, IMapTo<User>
+public class SaveUserProfileCommand : ICommand<int>, IMapTo<User>
 {
     public int Id { get; set; }
     public string AppUserId { get; set; } = default!;
@@ -20,7 +21,7 @@ public class SaveUserProfileCommand : IRequest<int>, IMapTo<User>
     public string? InstagamUrl { get; set; }
 
 }
-public class SaveUserProfileCommandHandler : IRequestHandler<SaveUserProfileCommand, int>
+public class SaveUserProfileCommandHandler : ICommandHandler<SaveUserProfileCommand, int>
 {
     private readonly IAppDbContext _context;
     private readonly IMapper _mapper;
@@ -39,7 +40,7 @@ public class SaveUserProfileCommandHandler : IRequestHandler<SaveUserProfileComm
         {
             entity = await _context.Users.FindAsync(request.Id);
 
-            if (entity == null) throw new NotFoundException($"User not found with id {request.Id}");
+            if (entity == null) throw new UserNotFoundException(request.Id);
 
             _mapper.Map(request, entity);
         }

@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Notes.Application.Common.Abstractions;
 using Notes.Application.Interfaces;
 
 namespace Notes.Application.UserProfiles.Queries.GetUserProfileQuery;
 
-public class GetUserProfileQuery : IRequest<GetUserProfileDto>
+public class GetUserProfileQuery : IQuery<GetUserProfileDto>
 {
     public int Id { get; set; }
 }
 
-public class GetUserProfileQueryHandler : IRequestHandler<GetUserProfileQuery, GetUserProfileDto>
+public class GetUserProfileQueryHandler : IQueryHandler<GetUserProfileQuery, GetUserProfileDto>
 {
     private readonly IAppDbContext _context;
     private readonly IMapper _mapper;

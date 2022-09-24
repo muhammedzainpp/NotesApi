@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Notes.Application.Common.Abstractions;
 using Notes.Application.Interfaces;
 using Notes.Application.Labels.Queries.Dtos;
 
 namespace Notes.Application.Labels.Queries;
 
-public class GetLabelQuery : IRequest<IEnumerable<LabelDto>>
+public class GetLabelQuery : IQuery<IEnumerable<LabelDto>>
 {
 }
 
-public class GetLabelQueryHandler : IRequestHandler<GetLabelQuery, IEnumerable<LabelDto>>
+public class GetLabelQueryHandler : IQueryHandler<GetLabelQuery, IEnumerable<LabelDto>>
 {
 
     private readonly IAppDbContext _context;

@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -75,7 +76,7 @@ public class IdentityService : IIdentityService
         var user = await _context.Users.FindAsync(request.UserId);
 
         if (user is null)
-            throw new NotFoundException("User Not Found in this Id");
+            throw new UserNotFoundException(request.UserId);
 
         var appUser =await _userManager.FindByIdAsync(user.AppUserId);
         appUser.RefreshToken = null;

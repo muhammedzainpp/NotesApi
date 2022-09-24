@@ -1,28 +1,29 @@
-﻿using MediatR;
+﻿using Domain.Exceptions;
+using Notes.Application.Common.Abstractions;
 using Notes.Application.Common.Exceptions;
 using Notes.Application.Interfaces;
 
 namespace Notes.Application.Labels.Commands;
 
-public class DeleteLabelCommand : IRequest
+public class DeleteLabelCommand : ICommand<int>
 {
     public int Id { get; set; }
 }
-public class DeleteLabelHandler : IRequestHandler<DeleteLabelCommand, Unit>
+public class DeleteLabelHandler : ICommandHandler<DeleteLabelCommand, int>
 {
     private readonly IAppDbContext _context;
     public DeleteLabelHandler(IAppDbContext context) => _context = context;
-    public async Task<Unit> Handle(DeleteLabelCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(DeleteLabelCommand request, CancellationToken cancellationToken)
     {
 
         var result = await _context.Labels.FindAsync(request.Id);
 
 
         if (result == null)
-            throw new NotFoundException($"Note not found with id {request.Id}");
+            throw new LabelNotFoundException(request.Id);
 
         _context.Labels.Remove(result);
         await _context.SaveChangesAsync();
-        return Unit.Value;
+        return request.Id;
     }
 }
