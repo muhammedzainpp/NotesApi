@@ -20,14 +20,19 @@ public class IdentityService : IIdentityService
     private readonly IConfigurationSection _jwtSettings;
     private readonly UserManager<AppUser> _userManager;
     private readonly IAppDbContext _context;
+    private readonly IDateTimeService _dateTime;
 
-    public IdentityService(IConfiguration configuration, UserManager<AppUser> userManager,
-        IAppDbContext context)
+    public IdentityService(
+        IConfiguration configuration,
+        UserManager<AppUser> userManager,
+        IAppDbContext context,
+        IDateTimeService dateTime)
     {
         _configuration = configuration;
         _jwtSettings = _configuration.GetSection("JwtSettings");
         _userManager = userManager;
         _context = context;
+        _dateTime = dateTime;
     }
 
     public async Task<AuthResponseDto> LoginAsync(LoginDto request)
@@ -90,7 +95,7 @@ public class IdentityService : IIdentityService
         var username = principal.Identity?.Name;
         var appUser = await _userManager.FindByEmailAsync(username);
 
-        if (appUser == null || appUser.RefreshToken != request.RefreshToken || appUser.RefreshTokenExpiryTime <= DateTime.Now)
+        if (appUser == null || appUser.RefreshToken != request.RefreshToken || appUser.RefreshTokenExpiryTime <= _dateTime.Now)
             return GetResponseIfNotSuccessful();
 
         var user = await _context.Users.SingleAsync(u => u.AppUserId == appUser.Id);
@@ -133,7 +138,7 @@ public class IdentityService : IIdentityService
     private async Task SetRefreshTokenAsync(AppUser appUser)
     {
         appUser.RefreshToken = GenerateRefreshToken();
-        appUser.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+        appUser.RefreshTokenExpiryTime = _dateTime.Now.AddDays(7);
         await _userManager.UpdateAsync(appUser);
     }
 
@@ -209,7 +214,7 @@ public class IdentityService : IIdentityService
             issuer: _jwtSettings["validIssuer"],
             audience: _jwtSettings["validAudience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtSettings["expiryInMinutes"])),
+            expires: _dateTime.Now.AddMinutes(Convert.ToDouble(_jwtSettings["expiryInMinutes"])),
             signingCredentials: signingCredentials);
 
         return tokenOptions;

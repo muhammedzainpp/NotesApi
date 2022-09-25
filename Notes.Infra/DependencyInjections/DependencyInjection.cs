@@ -46,6 +46,8 @@ public static class DependencyInjection
         });
 
         services.AddScoped<DbInitializer>();
+        services.AddScoped<IDateTimeService, IDateTimeService>();
+
         return services;
     }
 }

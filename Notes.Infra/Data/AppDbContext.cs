@@ -11,10 +11,15 @@ namespace Notes.Infra.Data;
 public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IDateTimeService _dateTime;
 
-    public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
+    public AppDbContext(
+        DbContextOptions<AppDbContext> options, 
+        IHttpContextAccessor httpContextAccessor,
+        IDateTimeService dateTime) : base(options)
     {
         _httpContextAccessor = httpContextAccessor;
+        _dateTime = dateTime;
     }
     public DbSet<Note> Notes { get; set; } = default!;
     public DbSet<Label> Labels { get ; set ; } = default!;
@@ -47,7 +52,8 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
 
     private void OnSave()
     {
-        var now = DateTime.UtcNow;
+        var now = _dateTime.Now;
+
         var currentUserId = GetCurrentUserId();
 
         foreach (var changedEntity in ChangeTracker.Entries())
