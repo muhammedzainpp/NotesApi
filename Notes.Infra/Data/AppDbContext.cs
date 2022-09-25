@@ -2,7 +2,6 @@
 using Domain.Entities.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Notes.Application.Interfaces;
 using Notes.Infra.Models;
@@ -42,20 +41,8 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<User>().HasData(new User
-        {
-            Id = 1,
-            AppUserId = "TestAppUserId",
-            Email = "test@test.com",
-            FirstName = "Tester",
-            LastName = "Tester"
-        });
-
-        var notes = SeedHelper.SeedData<Note>("Notes.json");
-
-        if (notes == null) return;
-
-        builder.Entity<Note>().HasData(notes);
+        var assemblyWithConfigurations = GetType().Assembly; 
+        builder.ApplyConfigurationsFromAssembly(assemblyWithConfigurations);
     }
 
     private void OnSave()
