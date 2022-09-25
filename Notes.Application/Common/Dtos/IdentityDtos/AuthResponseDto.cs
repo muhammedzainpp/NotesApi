@@ -5,6 +5,7 @@ namespace Notes.Application.Common.Dtos.IdentityDtos;
 public class AuthResponseDto
 {
     public int UserId { get; set; }
+    public string? AppUserId { get; set; }
     public string? FirstName { get; set; }
     public bool IsSuccessful { get; set; }
     public string? ErrorMessage { get; set; }

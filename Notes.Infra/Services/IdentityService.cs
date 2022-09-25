@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Notes.Application;
 using Notes.Application.Common.Dtos.IdentityDtos;
-using Notes.Application.Common.Exceptions;
 using Notes.Application.Interfaces;
+using Notes.Infra.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -59,8 +58,6 @@ public class IdentityService : IIdentityService
 
         var user = MapToUser(appUser, request);
 
-
-
         _context.Users.Add(user);
 
         await _context.SaveChangesAsync();
@@ -85,10 +82,6 @@ public class IdentityService : IIdentityService
        await _userManager.UpdateAsync(appUser);
     }
 
-
-
-
-
     public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenDto request)
     {
         if (request is null) return GetResponseIfNotSuccessful();
@@ -107,11 +100,13 @@ public class IdentityService : IIdentityService
 
         return await GetResponseIfSuccessfull(appUser, user, token);
     }
+
     private async Task<AuthResponseDto> GetResponseIfSuccessfull(AppUser appUser, User user, string token) => 
         new()
         {
-            FirstName = user.FirstName,
             UserId = user.Id,
+            AppUserId = appUser.Id,
+            FirstName = user.FirstName,
             IsSuccessful = true,
             Token = token,
             RefreshToken = appUser.RefreshToken,

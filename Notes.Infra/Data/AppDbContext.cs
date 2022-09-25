@@ -2,10 +2,10 @@
 using Domain.Entities.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Notes.Application;
 using Notes.Application.Interfaces;
-
+using Notes.Infra.Models;
 
 namespace Notes.Infra.Data;
 
@@ -38,10 +38,30 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
         return base.SaveChangesAsync(cancellationToken);
     }
 
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<User>().HasData(new User
+        {
+            Id = 1,
+            AppUserId = "TestAppUserId",
+            Email = "test@test.com",
+            FirstName = "Tester",
+            LastName = "Tester"
+        });
+
+        var notes = SeedHelper.SeedData<Note>("Notes.json");
+
+        if (notes == null) return;
+
+        builder.Entity<Note>().HasData(notes);
+    }
+
     private void OnSave()
     {
         var now = DateTime.UtcNow;
-        var currentUser = GetCurrentUser();
+        var currentUserId = GetCurrentUserId();
 
         foreach (var changedEntity in ChangeTracker.Entries())
         {
@@ -52,14 +72,14 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
                     case EntityState.Added:
                         entity.CreatedAt = now;
                         entity.ModifiedAt = now;
-                        entity.CreatedBy = currentUser;
-                        entity.ModifiedBy = currentUser;
+                        entity.CreatedBy = currentUserId;
+                        entity.ModifiedBy = currentUserId;
                         break;
                     case EntityState.Modified:
                         Entry(entity).Property(x => x.CreatedBy).IsModified = false;
                         Entry(entity).Property(x => x.CreatedAt).IsModified = false;
                         entity.ModifiedAt = now;
-                        entity.ModifiedBy = currentUser;
+                        entity.ModifiedBy = currentUserId;
                         break;
                     case EntityState.Deleted:
                         changedEntity.State = EntityState.Modified;
@@ -71,12 +91,12 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
         }
     }
 
-    private string GetCurrentUser()
+    private int GetCurrentUserId()
     {
         var currentSessionUserEmail = _httpContextAccessor.HttpContext?.User?.Identity?.Name;
 
         var user = Users.SingleOrDefault(u => u.Email.Equals(currentSessionUserEmail));
 
-        return user is not null ? user.FirstName : "Anonymous";
+        return user is not null ? user.Id : 0;
     }
 }
