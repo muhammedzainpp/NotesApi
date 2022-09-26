@@ -16,8 +16,7 @@ namespace Notes.Infra.Services;
 
 public class IdentityService : IIdentityService
 {
-    private readonly IConfiguration _configuration;
-    private readonly IConfigurationSection _jwtSettings;
+    private readonly JwtSettings _jwtSettings;
     private readonly UserManager<AppUser> _userManager;
     private readonly IAppDbContext _context;
     private readonly IDateTimeService _dateTime;
@@ -28,8 +27,9 @@ public class IdentityService : IIdentityService
         IAppDbContext context,
         IDateTimeService dateTime)
     {
-        _configuration = configuration;
-        _jwtSettings = _configuration.GetSection("JwtSettings");
+        _jwtSettings = configuration
+            .Get<LocalConfigurations>()
+            .JwtSettings;
         _userManager = userManager;
         _context = context;
         _dateTime = dateTime;
@@ -158,10 +158,10 @@ public class IdentityService : IIdentityService
             ValidateIssuer = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_jwtSettings["securityKey"])),
+                Encoding.UTF8.GetBytes(_jwtSettings.SecurityKey)),
             ValidateLifetime = false,
-            ValidIssuer = _jwtSettings["validIssuer"],
-            ValidAudience = _jwtSettings["validAudience"],
+            ValidIssuer = _jwtSettings.ValidIssuer,
+            ValidAudience = _jwtSettings.ValidAudience,
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -187,7 +187,7 @@ public class IdentityService : IIdentityService
     }
     private SigningCredentials GetSigningCredentials()
     {
-        var key = Encoding.UTF8.GetBytes(_jwtSettings["securityKey"]);
+        var key = Encoding.UTF8.GetBytes(_jwtSettings.SecurityKey);
         var secret = new SymmetricSecurityKey(key);
 
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
@@ -211,10 +211,10 @@ public class IdentityService : IIdentityService
     private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
     {
         var tokenOptions = new JwtSecurityToken(
-            issuer: _jwtSettings["validIssuer"],
-            audience: _jwtSettings["validAudience"],
+            issuer: _jwtSettings.ValidIssuer,
+            audience: _jwtSettings.ValidAudience,
             claims: claims,
-            expires: _dateTime.Now.AddMinutes(Convert.ToDouble(_jwtSettings["expiryInMinutes"])),
+            expires: _dateTime.Now.AddMinutes(Convert.ToDouble(_jwtSettings.ExpiryInMinutes)),
             signingCredentials: signingCredentials);
 
         return tokenOptions;

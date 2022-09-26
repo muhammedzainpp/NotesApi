@@ -25,7 +25,10 @@ public static class DependencyInjection
 
         services.AddScoped<IIdentityService, IdentityService>();
 
-        var jwtSettings = configuration.GetSection("JWTSettings");
+        //var jwtSettings = configuration.GetSection("JWTSettings");
+        var jwtSettings = configuration
+            .Get<LocalConfigurations>()
+            .JwtSettings;
 
         services.AddAuthentication(opt =>
         {
@@ -40,9 +43,9 @@ public static class DependencyInjection
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
 
-                ValidIssuer = jwtSettings["validIssuer"],
-                ValidAudience = jwtSettings["validAudience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["securityKey"]))
+                ValidIssuer = jwtSettings.ValidIssuer,
+                ValidAudience = jwtSettings.ValidAudience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecurityKey))
             };
         });
 
