@@ -8,6 +8,7 @@ namespace Notes.IntegrationTests.Base;
 public class IntegrationTestBase
 {
     private static string? _token;
+    protected static int _userId;
 
     protected static async Task AuthenticateAsync(HttpClient testClient) =>
         testClient.DefaultRequestHeaders.Authorization =
@@ -33,9 +34,12 @@ public class IntegrationTestBase
 
     private static async Task<string> GetJwtAsync(HttpClient testClient)
     {
-        _token = _token is null ? 
-            (await RegisterUserAsync(testClient)).Token!
-            : _token;
+        if (_token is null)
+        {
+            var result = await RegisterUserAsync(testClient);
+            _token = result.Token!;
+            _userId = result.UserId;
+        }
 
         return _token;
     }

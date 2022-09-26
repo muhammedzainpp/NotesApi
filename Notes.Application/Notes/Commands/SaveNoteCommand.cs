@@ -36,7 +36,7 @@ public class SaveNoteCommandHandler : ICommandHandler<SaveNoteCommand, int>
 
             if (entity == null) throw new NoteNotFoundException(request.Id);
 
-               _mapper.Map(request, entity);
+            _mapper.Map(request, entity);
         }
         //var entity = new Note()
         //{
@@ -45,8 +45,17 @@ public class SaveNoteCommandHandler : ICommandHandler<SaveNoteCommand, int>
         //    Title = request.Title,
         //};
 
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
 
-        await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+
 
         return entity.Id;
 

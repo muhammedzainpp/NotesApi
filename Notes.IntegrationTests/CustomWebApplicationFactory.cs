@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+using Notes.Application.Interfaces;
 using Notes.Infra.Data;
+using Notes.Infra.Seedings;
+using Notes.IntegrationTests.Mocks;
 
 namespace Notes.IntegrationTests;
 
@@ -14,12 +18,16 @@ public class CustomWebApplicationFactory<TStartup>
 
         builder.ConfigureServices(services =>
         {
-            var descriptor = services.SingleOrDefault(
+            var context = services.SingleOrDefault(
                 d => d.ServiceType ==
                     typeof(DbContextOptions<AppDbContext>));
 
-            if (descriptor is not null)
-                services.Remove(descriptor);
+            if (context is not null)
+                services.Remove(context);
+
+            services.AddScoped<ISeeder, MockSeeder>();
+
+            services.AddScoped<ILoggedInUserInfo, MockLoggedInUser>();
 
             services.AddDbContext<AppDbContext>(options =>
             {
@@ -34,6 +42,7 @@ public class CustomWebApplicationFactory<TStartup>
                 var db = scopedServices.GetRequiredService<AppDbContext>();
 
                 db.Database.EnsureCreated();
+                //db.Database.Migrate();
             }
         });
     }

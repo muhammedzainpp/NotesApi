@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Notes.Application.Interfaces;
 using Notes.Infra.Data;
 using Notes.Infra.Models;
+using Notes.Infra.Seedings;
 using Notes.Infra.Services;
 using System.Text;
 
@@ -47,6 +48,8 @@ public static class DependencyInjection
 
         services.AddScoped<DbInitializer>();
         services.AddScoped<IDateTimeService, DateTimeService>();
+        services.AddScoped<ISeeder, DevSeeder>();
+        services.AddScoped<ILoggedInUserInfo, LoggedInUserInfo>();
 
         return services;
     }

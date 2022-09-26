@@ -37,8 +37,6 @@ public class NotesControllerTests : IntegrationTestBase, IClassFixture<CustomWeb
         var response = await _autherizedClient.GetAsync(RequestUri);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        (await response.ReadAsAsync<List<NotesDto>>()).Should().BeEmpty();
     }
 
     [Fact]
@@ -83,6 +81,7 @@ public class NotesControllerTests : IntegrationTestBase, IClassFixture<CustomWeb
     {
         var request = GetRandomObjectAs<SaveNoteCommand>();
         request.Id = 0;
+        request.UserId = _userId;
 
         var response = await _autherizedClient.PostAsJsonAsync(RequestUri, request);
         return response;

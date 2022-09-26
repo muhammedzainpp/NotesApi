@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Notes.Infra.Data;
+namespace Notes.Infra.Seedings;
 
 public class SeedHelper
 {

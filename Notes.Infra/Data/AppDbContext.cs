@@ -1,6 +1,5 @@
 ﻿using Domain.Entities;
 using Domain.Entities.Base;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Notes.Application.Interfaces;
@@ -10,15 +9,15 @@ namespace Notes.Infra.Data;
 
 public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILoggedInUserInfo _loggedInUserInfo;
     private readonly IDateTimeService _dateTime;
 
     public AppDbContext(
         DbContextOptions<AppDbContext> options, 
-        IHttpContextAccessor httpContextAccessor,
+        ILoggedInUserInfo loggedInUserInfo,
         IDateTimeService dateTime) : base(options)
     {
-        _httpContextAccessor = httpContextAccessor;
+        _loggedInUserInfo = loggedInUserInfo;
         _dateTime = dateTime;
     }
     public DbSet<Note> Notes { get; set; } = default!;
@@ -54,7 +53,7 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
     {
         var now = _dateTime.Now;
 
-        var currentUserId = GetCurrentUserId();
+        var currentUserId = GetLoggedInUserId();
 
         foreach (var changedEntity in ChangeTracker.Entries())
         {
@@ -84,9 +83,9 @@ public class AppDbContext : IdentityDbContext<AppUser>, IAppDbContext
         }
     }
 
-    private int GetCurrentUserId()
+    private int GetLoggedInUserId()
     {
-        var currentSessionUserEmail = _httpContextAccessor.HttpContext?.User?.Identity?.Name;
+        var currentSessionUserEmail = _loggedInUserInfo.GetLoggedInUserEmail();
 
         var user = Users.SingleOrDefault(u => u.Email.Equals(currentSessionUserEmail));
 
