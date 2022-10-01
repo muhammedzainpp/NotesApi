@@ -9,7 +9,6 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="$(AssemblyName).IntegrationTests" />
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
 		<PackageReference Include="MediatR" Version="10.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
 			<PrivateAssets>all</PrivateAssets>

@@ -3,16 +3,14 @@ using Notes.Infra.Data;
 using Notes.Infra.DependencyInjections;
 
 var builder = WebApplication.CreateBuilder(args);
-var services = builder.Services;
 // Add services to the container.
+var services = builder.Services;
 {
 
     services.AddControllers();
 
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen();
-
-    services.AddAutoMapper(typeof(Program).Assembly);
 
     services.AddInfra(builder.Configuration);
     services.AddApplication();
