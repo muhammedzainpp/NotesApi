@@ -12,6 +12,7 @@ public class SaveLabelCommand : ICommand<int>, IMapTo<Label>
     public int Id { get; set; }
     public string Title { get; set; } = default!;
     public string? Description { get; set; }
+    public int UserId { get; set; }
 }
 
 public class SaveLabelCommandHandler : ICommandHandler<SaveLabelCommand, int>
