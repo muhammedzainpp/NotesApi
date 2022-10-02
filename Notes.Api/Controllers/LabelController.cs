@@ -7,7 +7,7 @@ using Notes.Application.Labels.Queries;
 
 namespace Notes.Api.Controllers;
 
-//[Authorize]
+[Authorize]
 public class LabelController : ApiControllerBase
 {
     public LabelController(IMediator mediator) : base(mediator)
