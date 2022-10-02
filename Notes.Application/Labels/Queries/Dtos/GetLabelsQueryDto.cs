@@ -3,7 +3,7 @@ using Notes.Application.Interfaces;
 
 namespace Notes.Application.Labels.Queries.Dtos;
 
-public class LabelDto : IMapFrom<Label>
+public class GetLabelsQueryDto : IMapFrom<Label>
 {
     public int Id { get; set; }
     public string Title { get; set; } = default!;
