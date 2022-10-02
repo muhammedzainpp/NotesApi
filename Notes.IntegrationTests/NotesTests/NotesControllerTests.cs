@@ -5,7 +5,7 @@ using Notes.IntegrationTests.Base;
 using Notes.IntegrationTests.Extensions;
 using System.Net;
 
-namespace Notes.IntegrationTests.Notes;
+namespace Notes.IntegrationTests.NotesTests;
 
 public class NotesControllerTests : IntegrationTestBase, IClassFixture<CustomWebApplicationFactory<Program>>
 {
@@ -69,7 +69,7 @@ public class NotesControllerTests : IntegrationTestBase, IClassFixture<CustomWeb
     {
         await AuthenticateAsync(_autherizedClient);
         var response = await CreateNoteAsync();
-        int.TryParse((await response.Content.ReadAsStringAsync()), out var id);
+        int.TryParse(await response.Content.ReadAsStringAsync(), out var id);
         var randomNote = GetRandomObjectAs<SaveNoteCommand>();
         randomNote.Id = id;
         var httpResponse = await _autherizedClient.PostAsJsonAsync(RequestUri, randomNote);
