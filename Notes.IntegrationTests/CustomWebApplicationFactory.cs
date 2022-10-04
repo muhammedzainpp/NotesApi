@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using Notes.Application.Interfaces;
 using Notes.Infra.Data;
-using Notes.Infra.Seedings;
 using Notes.IntegrationTests.Mocks;
 
 namespace Notes.IntegrationTests;
