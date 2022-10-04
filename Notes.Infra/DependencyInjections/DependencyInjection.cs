@@ -51,7 +51,6 @@ public static class DependencyInjection
 
         services.AddScoped<DbInitializer>();
         services.AddScoped<IDateTimeService, DateTimeService>();
-        services.AddScoped<ISeeder, DevSeeder>();
         services.AddScoped<ILoggedInUserInfo, LoggedInUserInfo>();
 
         return services;

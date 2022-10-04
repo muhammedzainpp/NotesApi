@@ -25,8 +25,6 @@ public class CustomWebApplicationFactory<TStartup>
             if (context is not null)
                 services.Remove(context);
 
-            services.AddScoped<ISeeder, MockSeeder>();
-
             services.AddScoped<ILoggedInUserInfo, MockLoggedInUser>();
 
             services.AddDbContext<AppDbContext>(options =>
