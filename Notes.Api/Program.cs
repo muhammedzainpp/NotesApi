@@ -36,6 +36,7 @@ var app = builder.Build();
     if (app.Environment.IsDevelopment())
     {
         DbInitializer.MigrateDb(app);
+        await DbInitializer.SeedAsync(app);
         app.UseSwagger();
         app.UseSwaggerUI();
     }
